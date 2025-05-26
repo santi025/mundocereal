@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú vendedor</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Menú lateral -->
+        <nav class="nav">
+            <button id="toggle-menu" class="toggle-button">☰</button>
+            <li class="list__item">
+                <div class="list__button">
+                    <img src="assets/dashboard.svg" class="list__img">
+                    <a href="../../index.html" class="nav__link">Inicio</a>
+                </div>
+            </li>
+            
+            <li class="list__item list__item--click">
+                <div class="list__button list__button--click">
+                    <img src="assets/inv.svg" class="list__img">
+                    <a href="../../inventario/inventario.php" class="nav__link">Inventario</a>
+                </div>                
+            </li>
+
+            <li class="list__item list__item--click">
+                <div class="list__button list__button--click">
+                    <img src="assets/pedido.svg" class="list__img">
+                    <a href="../../pedido/pedido.php" class="nav__link">Pedidos</a>
+                </div>
+            </li>
+
+            <li class="list__item list__item--click">
+                <div class="list__button list__button--click">
+                    <img src="assets/user.svg" class="list__img">
+                    <a href="../../cliente/cliente.php" class="nav__link">Cliente</a>
+                </div>
+            </li>
+
+            <li class="list__item">
+                <div class="list__button">
+                    <img src="assets/backk.svg" class="list__img">
+                    <a href="../../index.html" class="nav__link">Cerrar sesión</a>
+                </div>
+            </li>
+
+        </ul>
+        </nav>
+
+        <!-- Imagen o contenido principal -->
+        <div class="main-content">
+            <img src="../Menu_Admin/Mundo Cereal.png" alt="Imagen de bienvenida">
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>

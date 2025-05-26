@@ -1,0 +1,80 @@
+/* Usamos la fuente Poppins para todo el cuerpo */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4e9d8; /* Fondo en un tono beige cálido */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #4b2e2e; /* Texto en color marrón oscuro */
+}
+
+/* Estilo del contenedor de login */
+.login-container {
+    background: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    width: 300px;
+}
+
+/* Estilo para el título */
+h1 {
+    color: #6e4b3c; /* Color marrón oscuro para el título */
+    margin-bottom: 0.5rem;
+    font-size: 2.2rem; /* Tamaño de letra más grande */
+}
+
+/* Estilo para el subtítulo */
+h2 {
+    color: #6e4b3c; /* Marrón cálido */
+    margin-bottom: 1.5rem;
+    font-size: 1.5rem; /* Tamaño de letra legible */
+}
+
+/* Estilo para los grupos de entrada */
+.input-group {
+    margin-bottom: 1.5rem;
+    text-align: left;
+}
+
+/* Estilo para las etiquetas */
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #5c4033; /* Color marrón cálido */
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+/* Estilo para los campos de entrada (usuario, contraseña) */
+input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #bfa38f; /* Bordes en marrón claro */
+    border-radius: 8px;
+    box-sizing: border-box;
+    font-size: 1rem; /* Tamaño de letra legible */
+    color: #4b2e2e; /* Texto en marrón oscuro */
+}
+
+/* Estilo para el botón de login */
+.login-button {
+    width: 100%;
+    padding: 1rem;
+    background-color: #8e7c5e; /* Fondo del botón color café suave */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    font-weight: bold;
+}
+
+/* Estilo para cuando el botón de login es hoverado */
+.login-button:hover {
+    background-color: #7c664e; /* Cambio de color cuando se pasa el cursor */
+}

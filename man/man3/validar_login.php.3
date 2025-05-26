@@ -1,0 +1,54 @@
+.TH "validar_login.php" 3 "My Project" \" -*- nroff -*-
+.ad l
+.nh
+.SH NAME
+validar_login.php
+.SH SYNOPSIS
+.br
+.PP
+.SS "Variables"
+
+.in +1c
+.ti -1c
+.RI "\fB$conexion\fP = new mysqli('localhost', 'root', '', 'prueba\&.2')"
+.br
+.ti -1c
+.RI "if($conexion\->connect_error) \fB$usuario\fP = $_POST['usuario']"
+.br
+.ti -1c
+.RI "\fB$contraseña\fP = $_POST['contraseña']"
+.br
+.ti -1c
+.RI "\fB$sql\fP = 'SELECT * FROM usuario WHERE nombre = '$usuario' AND contraseña = '$contraseña''"
+.br
+.ti -1c
+.RI "\fB$resultado\fP = $conexion\->query($sql)"
+.br
+.ti -1c
+.RI "if($resultado\->num_rows > 0) \fBelse\fP"
+.br
+.in -1c
+.SH "Variable Documentation"
+.PP 
+.SS "$conexion = new mysqli('localhost', 'root', '', 'prueba\&.2')"
+
+.SS "$contraseña = $_POST['contraseña']"
+
+.SS "$resultado = $conexion\->query($sql)"
+
+.SS "$sql = 'SELECT * FROM usuario WHERE nombre = '$usuario' AND contraseña = '$contraseña''"
+
+.SS "if ( $conexion\->connect_error) $usuario = $_POST['usuario']"
+
+.SS "if ( $resultado\->num_rows > 0) else"
+\fBInitial value:\fP
+.nf
+{
+    
+    echo "<script>alert('Usuario o contraseña incorrectos'); window\&.location\&.href='index\&.html';</script>"
+.PP
+.fi
+
+.SH "Author"
+.PP 
+Generated automatically by Doxygen for My Project from the source code\&.
