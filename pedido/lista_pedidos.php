@@ -35,7 +35,6 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             font-size: 2rem;
         }
 
-        /* Estilo para los botones */
         .btn-link {
             font-size: 1rem;
             background-color: #7a5d44;
@@ -68,7 +67,6 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             background-color: #8c6d48;
         }
 
-        /* Estilos de las alertas */
         .alert {
             padding: 10px;
             margin: 20px 0;
@@ -85,7 +83,6 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             color: #721c24;
         }
 
-        /* Tabla */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -112,7 +109,6 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             background-color: #f1e2d2;
         }
 
-        /* Botones dentro de la tabla */
         .button {
             text-decoration: none;
             color: white;
@@ -147,7 +143,6 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             background-color: #8c1b0b;
         }
 
-        /* Posicionamiento del botón fijo */
         .top-right-button {
             position: fixed;
             top: 20px;
@@ -158,22 +153,19 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
 </head>
 <body>
 
-    <!-- Botón fijo en esquina superior derecha -->
     <div class="top-right-button">
         <a class="btn-link" href="../menus/Menu_Admin.php">🏠 Volver al Inicio</a>
     </div>
 
     <h2>Lista de Pedidos</h2>
 
-    <!-- Mostrar mensaje de éxito o error si existe -->
     <?php if ($mensaje): ?>
         <div class="alert <?= strpos($mensaje, 'Error') === false ? 'alert-success' : 'alert-error' ?>">
             <?= htmlspecialchars($mensaje) ?>
         </div>
     <?php endif; ?>
 
-    <!-- Botón para agregar un nuevo pedido -->
-    <a href="pedido.php" class="add-button"> Agregar Nuevo Pedido</a>
+    <a href="pedido.php" class="add-button">Agregar Nuevo Pedido</a>
 
     <?php
     if ($pedidos_result->num_rows > 0) {
@@ -193,17 +185,15 @@ $mensaje = isset($_GET['mensaje']) ? $_GET['mensaje'] : '';
             $fecha_pedido = $pedido['fecha_pedido'];
             $razon_social = $pedido['razon_social'];
             
-            // Mostrar los botones de acción
             echo "<tr>
-                    <td>" . $id_pedido . "</td>
-                    <td>" . $fecha_pedido . "</td>
-                    <td>" . $razon_social . "</td>
+                    <td>$id_pedido</td>
+                    <td>$fecha_pedido</td>
+                    <td>$razon_social</td>
                     <td>
                         <a href='ver_detalle_pedido.php?id_pedido=$id_pedido' class='button view-btn'>Ver Detalles</a>
                         <a href='editar.php?id_pedido=$id_pedido' class='button edit-btn'>Editar</a>
                         <a href='eliminar.php?id_pedido=$id_pedido' class='button delete-btn' onclick='return confirm(\"¿Estás seguro de eliminar este pedido?\");'>Eliminar</a>
-                        <!-- Enlace para vender el pedido -->
-                        <a href='../ventas/ventas.php?id_pedido=$id_pedido' class='button edit-btn'>Vender</a>
+                        <a href='registrar_venta_desde_pedido.php?id_pedido=$id_pedido' class='button edit-btn'>Vender</a>
                     </td>
                   </tr>";
         }

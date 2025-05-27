@@ -2,7 +2,10 @@
 include '../dt_base/Conexion_db.php';
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    $fecha = $_POST['fecha'];
+    // Usar la fecha actual del servidor
+    date_default_timezone_set('America/Lima');
+    $fecha = date("Y-m-d H:i:s");
+
     $comprobante_tipo = $_POST['comprobante_tipo'];
     $comprobante_numero = $_POST['comprobante_numero'];
     $cliente_nombre = $_POST['cliente_nombre'];
@@ -13,13 +16,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $subtotales = $_POST['subtotal'];
 
     $total = array_sum($subtotales);
-    $alertasStock = []; // Array para almacenar alertas de bajo stock
+    $alertasStock = [];
 
-    // Iniciar transacción
     $conn->begin_transaction();
 
     try {
-        // Insertar venta principal
         $sqlVenta = "INSERT INTO ventas (fecha, comprobante_tipo, comprobante_numero, cliente_nombre, cliente_documento, total)
                      VALUES ('$fecha', '$comprobante_tipo', '$comprobante_numero', '$cliente_nombre', '$cliente_documento', $total)";
         if ($conn->query($sqlVenta) === TRUE) {
@@ -30,26 +31,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 $precio_unitario = $precios[$index];
                 $subtotal = $subtotales[$index];
 
-                // Insertar detalle de la venta
                 $sqlDetalle = "INSERT INTO detalle_venta (venta_id, producto, cantidad, precio_unitario, subtotal)
                                VALUES ($venta_id, '$producto', $cantidad, $precio_unitario, $subtotal)";
                 $conn->query($sqlDetalle);
 
-                // Verificar y actualizar inventario
                 $sqlInventario = "SELECT cantidad FROM inventario WHERE id_producto = '$producto'";
                 $resultInventario = $conn->query($sqlInventario);
 
-                if ($resultInventario->num_rows > 0) {
+                if ($resultInventario && $resultInventario->num_rows > 0) {
                     $row = $resultInventario->fetch_assoc();
                     $cantidadInventario = $row['cantidad'];
 
                     if ($cantidadInventario >= $cantidad) {
-                        // Verificar si el stock es bajo
                         if ($cantidadInventario <= 1) {
-                            $alertasStock[] = "El producto ID: $producto está con baja de stock (solo $cantidadInventario unidad(es) disponible(s)).";
+                            $alertasStock[] = "El producto ID: $producto está con baja de stock (solo $cantidadInventario unidad(es)).";
                         }
 
-                        // Restar cantidad del inventario
                         $newCantidad = $cantidadInventario - $cantidad;
                         $sqlActualizarInventario = "UPDATE inventario SET cantidad = $newCantidad WHERE id_producto = '$producto'";
                         $conn->query($sqlActualizarInventario);
@@ -61,10 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 }
             }
 
-            // Confirmar transacción
             $conn->commit();
 
-            // Si hay alertas de stock bajo, redirigir con el mensaje
             if (!empty($alertasStock)) {
                 echo "<script>alert('" . implode("\\n", $alertasStock) . "');</script>";
             }
@@ -75,13 +70,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             throw new Exception("Error al registrar la venta: " . $conn->error);
         }
     } catch (Exception $e) {
-        // Revertir transacción en caso de error
         $conn->rollback();
         echo "<p style='color:red;'>❌ Error: " . $e->getMessage() . "</p>";
     }
 }
 
-// Obtener productos y precios
 $productos_query = "SELECT * FROM producto";
 $productos_result = $conn->query($productos_query);
 $precios = [];
@@ -129,7 +122,6 @@ $productos_result->data_seek(0);
 
         input[type="text"],
         input[type="number"],
-        input[type="datetime-local"],
         select {
             width: 100%;
             padding: 12px;
@@ -192,11 +184,6 @@ $productos_result->data_seek(0);
             text-align: center;
         }
 
-        span {
-            font-size: 1rem;
-            color: #888;
-        }
-
         button[type="submit"] {
             background: linear-gradient(to right, #6d4c41, #3e2723);
             color: #fff;
@@ -205,7 +192,6 @@ $productos_result->data_seek(0);
             border-radius: 8px;
             font-size: 1.2rem;
             cursor: pointer;
-            transition: transform 0.2s, background-color 0.3s;
             width: 100%;
             margin-top: 20px;
         }
@@ -215,7 +201,6 @@ $productos_result->data_seek(0);
             transform: scale(1.02);
         }
 
-        /* Estilo del botón Volver */
         .btn-volver {
             background-color: #607D8B;
             color: white;
@@ -238,9 +223,6 @@ $productos_result->data_seek(0);
 <h2>Registrar Venta</h2>
 
 <form method="POST" onsubmit="return calcularTotales();">
-    <label>Fecha:</label>
-    <input type="datetime-local" name="fecha" required>
-
     <label>Tipo de Comprobante:</label>
     <input type="text" name="comprobante_tipo" required>
 
@@ -263,7 +245,6 @@ $productos_result->data_seek(0);
     <button type="submit">✅ Registrar Venta</button>
 </form>
 
-<!-- Botón de Volver -->
 <button class="btn-volver" onclick="window.location.href='ventas.php'">← Volver</button>
 
 <script>

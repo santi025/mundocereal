@@ -87,43 +87,35 @@ $resultado = $conn->query($sql);
             text-decoration: none;
             border-radius: 6px;
             font-size: 0.9em;
+            margin-right: 4px;
         }
 
-        .edit-btn { 
-            background-color: #28a745; 
-        }
+        .edit-btn { background-color: #28a745; }
+        .delete-btn { background-color: #dc3545; }
+        .toggle-btn { background-color: #007bff; }
+        .button:hover { opacity: 0.85; }
 
-        .delete-btn { 
-            background-color: #dc3545; 
-        }
-
-        .button:hover {
-            opacity: 0.85;
-        }
-
-        .message {
-            text-align: center;
-            margin-top: 30px;
-            padding: 12px;
-            font-size: 1.2em;
-            font-weight: bold;
-            border-radius: 6px;
-        }
-
-        .message.success {
+        .estado-activo {
             background-color: #d4edda;
             color: #155724;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 5px;
+            display: inline-block;
         }
 
-        .message.error {
+        .estado-inactivo {
             background-color: #f8d7da;
             color: #721c24;
+            font-weight: bold;
+            padding: 6px 10px;
+            border-radius: 5px;
+            display: inline-block;
         }
-
     </style>
 </head>
 <body>
-    <!-- Botón fijo en esquina superior derecha -->
+
     <div class="top-right-button">
         <a class="btn-link" href="../menus/Menu_Admin.php">🏠 Volver al Inicio</a>
     </div>
@@ -131,7 +123,7 @@ $resultado = $conn->query($sql);
     <h2>Proveedores Registrados</h2>
 
     <div class="top-button">
-        <a class="btn-link" href="proveedor.php"> Registrar Nuevo Proveedor</a>
+        <a class="btn-link" href="proveedor.php">+ Registrar Nuevo Proveedor</a>
     </div>
 
     <table>
@@ -141,6 +133,7 @@ $resultado = $conn->query($sql);
             <th>Entidad</th>
             <th>Teléfono</th>
             <th>Dirección</th>
+            <th>Estado</th>
             <th>Acciones</th>
         </tr>
         <?php while ($fila = $resultado->fetch_assoc()): ?>
@@ -151,8 +144,16 @@ $resultado = $conn->query($sql);
             <td><?= $fila['telefono'] ?></td>
             <td><?= $fila['direccion'] ?></td>
             <td>
+                <span class="<?= $fila['estado'] == 1 ? 'estado-activo' : 'estado-inactivo' ?>">
+                    <?= $fila['estado'] == 1 ? 'Activo' : 'Inactivo' ?>
+                </span>
+            </td>
+            <td>
                 <a class="button edit-btn" href="editar_proveedor.php?nit=<?= $fila['nit'] ?>">Editar</a>
                 <a class="button delete-btn" href="eliminar_proveedor.php?nit=<?= $fila['nit'] ?>" onclick="return confirm('¿Estás seguro de eliminar este proveedor?');">Eliminar</a>
+                <a class="button toggle-btn" href="cambiar_estado_proveedor.php?nit=<?= $fila['nit'] ?>" onclick="return confirm('¿Deseas cambiar el estado del proveedor?');">
+                    <?= $fila['estado'] == 1 ? 'Inactivar' : 'Activar' ?>
+                </a>
             </td>
         </tr>
         <?php endwhile; ?>

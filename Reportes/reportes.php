@@ -4,7 +4,6 @@ require_once('../dt_base/Conexion_db.php');
 $tipo = $_POST['tipo'] ?? '';
 $datos = [];
 $titulos = [];
-$columnas = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
     $consultas = [
@@ -13,7 +12,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
             "titulos" => ["ID", "Código", "Nombre", "Gramaje", "Precio", "Lote"]
         ],
         "inventario" => [
-            // 🔄 CORREGIDO: JOIN con tabla producto
             "sql" => "SELECT i.id_Inventario, p.nombre AS producto, p.gramaje, i.cantidad, i.precio_unitario, i.precio_total
                       FROM inventario i
                       JOIN producto p ON i.id_producto = p.id_Producto",
@@ -31,6 +29,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
             "sql" => "SELECT id_proveedor, nombre, entidad, nit, telefono, direccion FROM proveedor",
             "titulos" => ["ID", "Nombre", "Entidad", "NIT", "Teléfono", "Dirección"]
         ],
+        "general" => [
+            "sql" => "
+                SELECT 'Producto' AS tipo, nombre, gramaje AS detalle1, precio_unitario AS detalle2, lote AS detalle3 FROM producto
+                UNION
+                SELECT 'Inventario', p.nombre, p.gramaje, i.precio_unitario, i.precio_total
+                FROM inventario i
+                JOIN producto p ON i.id_producto = p.id_Producto
+                UNION
+                SELECT 'Cliente', razon_social, correo, direccion, '' FROM cliente
+                UNION
+                SELECT 'Materia Prima', nombre, unidad_med, cant_inventario, proveedor FROM inv_mat
+                UNION
+                SELECT 'Proveedor', nombre, entidad, telefono, direccion FROM proveedor
+            ",
+            "titulos" => ["Tipo", "Nombre", "Detalle 1", "Detalle 2", "Detalle 3"]
+        ]
     ];
 
     if (isset($consultas[$tipo])) {
@@ -52,15 +66,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
     <title>Reporte de <?= htmlspecialchars($tipo) ?></title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        body { font-family: Arial, sans-serif; background: #f3f3f3; padding: 20px; }
-        h2 { text-align: center; }
-        form { margin-bottom: 20px; text-align: center; }
-        table { width: 100%; border-collapse: collapse; background: white; margin-top: 20px; }
-        th, td { padding: 10px; border: 1px solid #ccc; text-align: center; }
-        th { background: #8d6748; color: white; }
-        button { padding: 10px 20px; background: #8d6748; color: white; border: none; border-radius: 5px; cursor: pointer; }
-        button:hover { background: #755133; }
-        .export-btn { text-align: center; margin-top: 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            background: #f9f8f6;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+            color: #5a3d2b;
+        }
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        select, button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background: #8d6748;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #694c34;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #8d6748;
+            color: white;
+        }
+        .export-btn {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .btn-volver {
+            display: inline-block;
+            text-align: center;
+            margin-top: 40px;
+            background: #555;
+            padding: 10px 20px;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .btn-volver:hover {
+            background: #333;
+        }
     </style>
 </head>
 <body>
@@ -76,13 +145,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
         <option value="cliente" <?= $tipo == "cliente" ? "selected" : "" ?>>Clientes</option>
         <option value="inv_mat" <?= $tipo == "inv_mat" ? "selected" : "" ?>>Materia Prima</option>
         <option value="proveedor" <?= $tipo == "proveedor" ? "selected" : "" ?>>Proveedores</option>
+        <option value="general" <?= $tipo == "general" ? "selected" : "" ?>>Reporte General</option>
     </select>
     <button type="submit">📋 Ver Reporte</button>
 </form>
 
 <?php if (!empty($datos)): ?>
     <div id="reporte">
-        <h2>Reporte de <?= ucfirst($tipo) ?></h2>
+        <h2>📊 Reporte de <?= ucfirst($tipo) ?></h2>
         <table>
             <thead>
                 <tr>
@@ -123,6 +193,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $tipo !== '') {
 <?php elseif ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
     <p style="text-align: center; color: red;">❌ No se encontraron datos para esta categoría.</p>
 <?php endif; ?>
+
+<div style="text-align: center;">
+    <a href="../menus/Menu_Admin.php" class="btn-volver">🔙 Volver al inicio</a>
+</div>
 
 </body>
 </html>

@@ -20,7 +20,7 @@ $result = $conn->query($sql);
         }
 
         header {
-            background: linear-gradient(135deg, #43cea2,rgb(41, 30, 9));
+            background: linear-gradient(135deg,rgb(210, 150, 44),rgb(41, 30, 9));
             color: white;
             text-align: center;
             padding: 20px;
@@ -44,7 +44,7 @@ $result = $conn->query($sql);
 
         .add-button {
             display: inline-block;
-            background: #3498db;
+            background:rgb(186, 219, 52);
             color: white;
             padding: 12px 20px;
             border-radius: 8px;
@@ -58,7 +58,7 @@ $result = $conn->query($sql);
         }
 
         .home-button {
-            background: #2ecc71;
+            background:rgb(204, 183, 46);
         }
 
         .home-button:hover {
@@ -163,7 +163,7 @@ $result = $conn->query($sql);
 <div class="container">
     <!-- Botones superiores a la izquierda -->
     <div class="buttons-container">
-        <a href="../../menus/Menu_Admin/index.html" class="add-button home-button">🏠 Volver al Inicio</a>
+        <a href="../../menus/menu_admin.php" class="add-button home-button">🏠 Volver al Inicio</a>
         <a href="agregar_mp.php" class="add-button">+ Agregar Producto</a>
     </div>
 
