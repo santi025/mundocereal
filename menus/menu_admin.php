@@ -1,6 +1,15 @@
 <?php
-// Puedes incluir tu conexión a la base de datos si es necesario
-// include '../conexion.php';
+include '../dt_base/Conexion_db.php';
+
+
+// Consultamos productos agotados
+$query = "SELECT p.nombre, p.gramaje
+          FROM inventario i
+          JOIN producto p ON i.id_producto = p.id_producto
+          WHERE i.cantidad = 0";
+$result = mysqli_query($conn, $query);
+$productosAgotados = mysqli_fetch_all($result, MYSQLI_ASSOC);
+$hay_alerta = count($productosAgotados) > 0;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -27,15 +36,15 @@
         .container {
             display: flex;
             height: 100vh;
-            flex-direction: row-reverse;
+            flex-direction: row;
         }
 
         .nav {
-            width: 400px;
+            width: 250px;
             background: #d7b8b1;
             transition: width 0.3s ease;
             overflow: hidden;
-            border-left: 1px solid #b89c91;
+            border-right: 1px solid #b89c91;
             position: relative;
         }
 
@@ -50,7 +59,6 @@
             text-decoration: none;
             transition: opacity 0.3s ease;
             font-size: 1.1em;
-            font-weight: 400; /* Cambiado de 600 a 400 */
         }
 
         .nav.collapsed .nav__link {
@@ -82,9 +90,6 @@
             display: block;
             padding: 15px 0;
             text-decoration: none;
-            transition: opacity 0.3s ease;
-            font-weight: 400; /* Cambiado de 600 a 400 */
-            line-height: 1;
         }
 
         .list__item--click {
@@ -109,9 +114,9 @@
         .toggle-button {
             position: absolute;
             top: 10px;
-            left: 10px;
+            right: 10px;
             z-index: 1000;
-            width: 60px;
+            width: 40px;
             height: 40px;
             background-color: transparent;
             border: none;
@@ -122,24 +127,82 @@
 
         .main-content {
             flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            position: relative;
             background: #e8d6c3;
         }
 
         .main-content img {
-            width: 80vw;
-            height: 100vh;
+            width: 100%;
+            height: 100%;
             object-fit: cover;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            width: 100%;
+            height: 60px;
+            background-color: #d7b8b1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            padding-right: 20px;
+            position: absolute;
+            top: 0;
+            z-index: 10;
+        }
+
+        .notification-bell {
+            position: relative;
+        }
+
+        .notification-bell img {
+            width: 30px;
+        }
+
+        .notification-dot {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            border-radius: 50%;
+        }
+
+        .notification-dropdown {
+            position: absolute;
+            top: 40px;
+            right: 0;
+            background-color: white;
+            color: black;
+            border: 1px solid #ccc;
+            padding: 10px;
+            width: 220px;
+            border-radius: 5px;
+            z-index: 20;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            font-size: 0.9em;
+        }
+
+        .notification-dropdown ul {
+            list-style: disc;
+            padding-left: 20px;
+            margin-top: 5px;
+        }
+
+        .notification-dropdown li {
+            margin-bottom: 5px;
+        }
+
+        .main-body {
+            height: 100%;
+            padding-top: 60px;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
-        <!-- Menú lateral derecho -->
+        <!-- Menú lateral izquierdo -->
         <nav class="nav">
             <button id="toggle-menu" class="toggle-button">☰</button>
             <ul class="list">
@@ -214,33 +277,45 @@
 
         <!-- Contenido principal -->
         <div class="main-content">
-            <img src="Imagen.jpg" alt="Imagen de bienvenida">
+            <div class="header">
+                <div class="notification-bell" id="noti-bell" title="Productos agotados">
+                    <img src="assets/bell.svg" alt="Notificaciones" style="cursor: pointer;">
+                    <?php if ($hay_alerta): ?>
+                        <span class="notification-dot"></span>
+                    <?php endif; ?>
+                    <div id="noti-dropdown" class="notification-dropdown" style="display: none;">
+                        <strong>Productos agotados:</strong>
+                        <ul>
+                            <?php foreach ($productosAgotados as $producto): ?>
+                                <li><?= htmlspecialchars($producto['nombre']) ?> - <?= htmlspecialchars($producto['gramaje']) ?></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-body">
+                <img src="Imagen.jpg" alt="Imagen de bienvenida">
+            </div>
         </div>
     </div>
 
     <script>
-        const listElements = document.querySelectorAll('.list__item--click');
         const toggleButton = document.getElementById('toggle-menu');
         const nav = document.querySelector('.nav');
-
         toggleButton.addEventListener('click', () => {
             nav.classList.toggle('collapsed');
         });
 
-        listElements.forEach(listElement => {
-            listElement.addEventListener('click', () => {
-                listElement.classList.toggle('arrow');
-                let height = 0;
-                let menu = listElement.nextElementSibling;
-                if (menu && menu.clientHeight === 0) {
-                    height = menu.scrollHeight;
-                }
-                if (menu) {
-                    menu.style.height = `${height}px`;
-                }
-            });
+        const bell = document.getElementById('noti-bell');
+        const dropdown = document.getElementById('noti-dropdown');
+        bell.addEventListener('click', function (e) {
+            e.stopPropagation();
+            dropdown.style.display = dropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        window.addEventListener('click', function () {
+            dropdown.style.display = 'none';
         });
     </script>
-
 </body>
 </html>
